@@ -34,6 +34,12 @@ service CameraServerService {
 
     // Subscribe to set camera mode requests. Each request received should response to using SetCameraModeResponse
     rpc SubscribeSetCameraMode(SubscribeSetCameraModeRequest) returns(stream SetCameraModeResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to camera storage information requests. Each request received should response to using SetCameraModeResponse
+    rpc SubscribeStorageInformation(SubscribeStorageInformationRequest) returns(stream StorageInformationResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to camera storage information from SubscribeStorageInformation.
+    rpc RespondStorageInformation(RespondStorageInformationRequest) returns(RespondStorageInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SetInformationRequest {
@@ -187,4 +193,52 @@ message SubscribeSetCameraModeRequest {
 
 message SetCameraModeResponse {
     CameraMode camera_mode = 1;
+}
+
+message SubscribeStorageInformationRequest {}
+
+message StorageInformationResponse {
+    int32 storage_id = 1;
+}
+
+// Information about the camera storage.
+message StorageInformation {
+    // Storage status type.
+    enum StorageStatus {
+        STORAGE_STATUS_NOT_AVAILABLE = 0; // Storage not available
+        STORAGE_STATUS_UNFORMATTED = 1; // Storage is not formatted (i.e. has no recognized file system)
+        STORAGE_STATUS_FORMATTED = 2; // Storage is formatted (i.e. has recognized a file system)
+        STORAGE_STATUS_NOT_SUPPORTED = 3; // Storage status is not supported
+    }
+
+    // Storage type.
+    enum StorageType {
+        STORAGE_TYPE_UNKNOWN = 0; // Storage type unknown
+        STORAGE_TYPE_USB_STICK = 1; // Storage type USB stick
+        STORAGE_TYPE_SD = 2; // Storage type SD card
+        STORAGE_TYPE_MICROSD = 3; // Storage type MicroSD card
+        STORAGE_TYPE_HD = 7; // Storage type HD mass storage
+        STORAGE_TYPE_OTHER = 254; // Storage type other, not listed
+    }
+
+    float used_storage_mib = 1; // Used storage (in MiB)
+    float available_storage_mib = 2; // Available storage (in MiB)
+    float total_storage_mib = 3; // Total storage (in MiB)
+
+    StorageStatus storage_status = 4; // Storage status
+
+    uint32 storage_id = 5; // Storage ID starting at 1
+
+    StorageType storage_type = 6; // Storage type
+
+    float read_speed = 7;   // Read speed [MiB/s]
+    float write_speed = 8;  // Write speed [MiB/s]
+}
+
+message RespondStorageInformationRequest {
+    StorageInformation storage_information = 1; // camera storage information
+}
+
+message RespondStorageInformationResponse {
+    CameraServerResult camera_server_result = 1;
 }
