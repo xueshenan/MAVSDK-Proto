@@ -19,6 +19,21 @@ service CameraServerService {
     
     // Respond to an image capture request from SubscribeTakePhoto.
     rpc RespondTakePhoto(RespondTakePhotoRequest) returns(RespondTakePhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to start video requests. Each request received should response to using StartVideoResponse
+    rpc SubscribeStartVideo(SubscribeStartVideoRequest) returns(stream StartVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to stop video requests. Each request received should response to using StopVideoResponse
+    rpc SubscribeStopVideo(SubscribeStopVideoRequest) returns(stream StopVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to start video streaming requests. Each request received should response to using StartVideoStreamingResponse
+    rpc SubscribeStartVideoStreaming(SubscribeStartVideoStreamingRequest) returns(stream StartVideoStreamingResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to stop video streaming requests. Each request received should response to using StopVideoStreamingResponse
+    rpc SubscribeStopVideoStreaming(SubscribeStopVideoStreamingRequest) returns(stream StopVideoStreamingResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to set camera mode requests. Each request received should response to using SetCameraModeResponse
+    rpc SubscribeSetCameraMode(SubscribeSetCameraModeRequest) returns(stream SetCameraModeResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message SetInformationRequest {
@@ -127,4 +142,49 @@ message CameraServerResult {
 
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
+}
+
+message SubscribeStartVideoRequest {}
+
+message StartVideoResponse {
+    int32 stream_id = 1;
+}
+
+message SubscribeStopVideoRequest {}
+
+message StopVideoResponse {
+    int32 stream_id = 1;
+}
+
+message SubscribeStartVideoStreamingRequest {}
+
+message StartVideoStreamingResponse {
+    int32 stream_id = 1;
+}
+
+message RespondStartVideoStreamingRequest {}
+
+message RespondStartVideoStreamingResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeStopVideoStreamingRequest {
+}
+
+message StopVideoStreamingResponse {
+    int32 stream_id = 1;
+}
+
+// Camera mode type.
+enum CameraMode {
+    CAMERA_MODE_UNKNOWN = 0; // Unknown
+    CAMERA_MODE_PHOTO = 1; // Photo mode
+    CAMERA_MODE_VIDEO = 2; // Video mode
+}
+
+message SubscribeSetCameraModeRequest {
+}
+
+message SetCameraModeResponse {
+    CameraMode camera_mode = 1;
 }
