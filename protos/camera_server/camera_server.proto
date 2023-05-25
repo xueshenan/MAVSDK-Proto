@@ -11,8 +11,6 @@ option java_outer_classname = "CameraServerProto";
 service CameraServerService {
     // Sets the camera information. This must be called as soon as the camera server is created.
     rpc SetInformation(SetInformationRequest) returns(SetInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
-    // Sets image capture in progress status flags. This should be set to true when the camera is busy taking a photo and false when it is done.
-    rpc SetInProgress(SetInProgressRequest) returns(SetInProgressResponse) { option (mavsdk.options.async_type) = SYNC; }
 
     // Subscribe to image capture requests. Each request received should respond to using RespondTakePhoto.
     rpc SubscribeTakePhoto(SubscribeTakePhotoRequest) returns(stream TakePhotoResponse) { option (mavsdk.options.async_type) = ASYNC; }
@@ -35,11 +33,17 @@ service CameraServerService {
     // Subscribe to set camera mode requests. Each request received should response to using SetCameraModeResponse
     rpc SubscribeSetCameraMode(SubscribeSetCameraModeRequest) returns(stream SetCameraModeResponse) { option (mavsdk.options.async_type) = ASYNC; }
 
-    // Subscribe to camera storage information requests. Each request received should response to using SetCameraModeResponse
+    // Subscribe to camera storage information requests. Each request received should response to using StorageInformationResponse
     rpc SubscribeStorageInformation(SubscribeStorageInformationRequest) returns(stream StorageInformationResponse) { option (mavsdk.options.async_type) = ASYNC; }
 
     // Respond to camera storage information from SubscribeStorageInformation.
     rpc RespondStorageInformation(RespondStorageInformationRequest) returns(RespondStorageInformationResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to camera capture status requests. Each request received should response to using CaptureStatusResponse
+    rpc SubscribeCaptureStatus(SubscribeCaptureStatusRequest) returns(stream CaptureStatusResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Respond to camera capture status from SubscribeCaptureStatus.
+    rpc RespondCaptureStatus(RespondCaptureStatusRequest) returns(RespondCaptureStatusResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message SetInformationRequest {
@@ -47,14 +51,6 @@ message SetInformationRequest {
 }
 
 message SetInformationResponse {
-    CameraServerResult camera_server_result = 1;
-}
-
-message SetInProgressRequest {
-    bool in_progress = 1; // true if capture is in progress or false for idle.
-}
-
-message SetInProgressResponse {
     CameraServerResult camera_server_result = 1;
 }
 
@@ -231,8 +227,8 @@ message StorageInformation {
 
     StorageType storage_type = 6; // Storage type
 
-    float read_speed = 7;   // Read speed [MiB/s]
-    float write_speed = 8;  // Write speed [MiB/s]
+    float read_speed = 7; // Read speed [MiB/s]
+    float write_speed = 8; // Write speed [MiB/s]
 }
 
 message RespondStorageInformationRequest {
@@ -240,5 +236,38 @@ message RespondStorageInformationRequest {
 }
 
 message RespondStorageInformationResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeCaptureStatusRequest {}
+
+message CaptureStatusResponse {
+    int32 storage_id = 1;
+}
+
+message CaptureStatus {
+    enum ImageStatus {
+        IMAGE_STATUS_IDLE = 0; // idle
+        IMAGE_STATUS_CAPTURE_IN_PROGRESS = 1; // capture in progress
+        IMAGE_STATUS_INTERVAL_IDLE = 2; // interval set but idle
+        IMAGE_STATUS_INTERVAL_IN_PROGRESS = 3; // interval set and capture in progress)
+    }
+    enum VideoStatus {
+        VIDEO_STATUS_IDLE = 0;  // idle
+        VIDEO_STATUS_CAPTURE_IN_PROGRESS = 1;   // capture in progress
+    }
+    float image_interval = 1; // Image capture interval (in s)
+    float recording_time_s = 2; // Elapsed time since recording started (in s)
+    float available_capacity = 3; // Available storage capacity. (in MiB)
+    ImageStatus image_status = 4; // Current status of image capturing
+    VideoStatus video_status = 5; // Current status of video capturing
+    int32 image_count = 6; // Total number of images captured ('forever', or until reset using MAV_CMD_STORAGE_FORMAT)
+}
+
+message RespondCaptureStatusRequest {
+    CaptureStatus capture_status = 1; // camera capture status
+}
+
+message RespondCaptureStatusResponse {
     CameraServerResult camera_server_result = 1;
 }
