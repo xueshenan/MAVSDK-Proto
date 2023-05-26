@@ -49,6 +49,10 @@ service ParamServerService {
      * Retrieve all parameters.
      */
     rpc RetrieveAllParams(RetrieveAllParamsRequest) returns(RetrieveAllParamsResponse) { option (mavsdk.options.async_type) = SYNC; }
+    /*
+    * Subscribe param changed
+    */
+    rpc SubscribeParamChanged(SubscribeParamChangedRequest) returns(SubscribeParamChangedResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message RetrieveParamIntRequest {
@@ -93,9 +97,25 @@ message RetrieveParamCustomResponse {
     string value = 2; // Value of the requested parameter
 }
 
+enum ValueType {
+    STRING_TYPE = 0; // string type (default)
+    INT8_TYPE = 1; // int8_t type
+    UINT8_TYPE = 2; // uint8_t type
+    INT16_TYPE = 3; // int16_t type
+    UINT16_TYPE = 4; // uint16_t type
+    INT32_TYPE = 5; // int32_t type
+    UINT32_TYPE = 6; // uint32_t type
+    INT64_TYPE = 7; // int64_t type
+    UINT64_TYPE = 8; // uint64_t type
+    FLOAT_TYPE = 9; // float type
+    DOUBLE_TYPE = 10; // double type
+    CUSTOM_TYPE = 99; // custom type
+}
+
 message ProvideParamCustomRequest {
     string name = 1; // Name of the parameter to provide
     string value = 2; // Value the parameter should be set to
+    ValueType value_type = 3; // value type for convert value to special type
 }
 message ProvideParamCustomResponse {
     ParamServerResult param_server_result = 1;
@@ -156,4 +176,13 @@ message ParamServerResult {
 
     Result result = 1; // Result enum value
     string result_str = 2; // Human-readable English string describing the result
+}
+
+message SubscribeParamChangedRequest {
+    string name = 1;
+    ValueType type = 2;
+}
+
+message SubscribeParamChangedResponse {
+    string value = 2;
 }
