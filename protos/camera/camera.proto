@@ -115,6 +115,17 @@ service CameraService {
      * This will reset all camera settings to default value
      */
     rpc ResetSettings(ResetSettingsRequest) returns(ResetSettingsResponse) {}
+    /*
+     * Manual set the definition file data
+     *
+     * The camera will use the definition file data to config the camera
+     * The camera already support http protocol to download definition file
+     * But we want to support mavlink ftp way to download file too.
+     * We donot want the camera to use file system to maintain the definition file.
+     * So we use mavlink ftp to downlaod the definition file first, 
+     * and read the definition file data set to camera. 
+     */
+     rpc SetDefinitionFileData(DefinitionFileDataRequest) returns(DefinitionFileDataResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message PrepareRequest {}
@@ -424,5 +435,12 @@ message Information {
 
 message ResetSettingsRequest {}
 message ResetSettingsResponse {
+    CameraResult camera_result = 1;
+}
+
+message DefinitionFileDataRequest{
+    string definition_file_data = 1;    // the definition file data
+}
+message DefinitionFileDataResponse {
     CameraResult camera_result = 1;
 }
