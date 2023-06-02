@@ -52,7 +52,7 @@ service ParamServerService {
     /*
     * Subscribe param changed
     */
-    rpc SubscribeParamChanged(SubscribeParamChangedRequest) returns(SubscribeParamChangedResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    rpc SubscribeParamChanged(SubscribeParamChangedRequest) returns(stream ParamChangedResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
 
 message RetrieveParamIntRequest {
@@ -97,25 +97,25 @@ message RetrieveParamCustomResponse {
     string value = 2; // Value of the requested parameter
 }
 
-enum ValueType {
-    STRING_TYPE = 0; // string type (default)
-    INT8_TYPE = 1; // int8_t type
-    UINT8_TYPE = 2; // uint8_t type
-    INT16_TYPE = 3; // int16_t type
-    UINT16_TYPE = 4; // uint16_t type
-    INT32_TYPE = 5; // int32_t type
-    UINT32_TYPE = 6; // uint32_t type
-    INT64_TYPE = 7; // int64_t type
-    UINT64_TYPE = 8; // uint64_t type
-    FLOAT_TYPE = 9; // float type
-    DOUBLE_TYPE = 10; // double type
-    CUSTOM_TYPE = 99; // custom type
+enum Type {
+    TYPE_STRING = 0; // string type (default)
+    TYPE_INT8 = 1; // int8_t type
+    TYPE_UINT8 = 2; // uint8_t type
+    TYPE_INT16 = 3; // int16_t type
+    TYPE_UINT16 = 4; // uint16_t type
+    TYPE_INT32 = 5; // int32_t type
+    TYPE_UINT32 = 6; // uint32_t type
+    TYPE_INT64 = 7; // int64_t type
+    TYPE_UINT64 = 8; // uint64_t type
+    TYPE_FLOAT = 9; // float type
+    TYPE_DOUBLE = 10; // double type
+    TYPE_CUSTOM = 99; // custom type
 }
 
 message ProvideParamCustomRequest {
     string name = 1; // Name of the parameter to provide
     string value = 2; // Value the parameter should be set to
-    ValueType value_type = 3; // value type for convert value to special type
+    Type value_type = 3; // value type for convert value to special type
 }
 message ProvideParamCustomResponse {
     ParamServerResult param_server_result = 1;
@@ -180,9 +180,9 @@ message ParamServerResult {
 
 message SubscribeParamChangedRequest {
     string name = 1;
-    ValueType type = 2;
+    Type type = 2;
 }
 
-message SubscribeParamChangedResponse {
-    string value = 2;
+message ParamChangedResponse {
+    string value = 1;
 }

@@ -125,7 +125,7 @@ service CameraService {
      * So we use mavlink ftp to downlaod the definition file first, 
      * and read the definition file data set to camera. 
      */
-     rpc SetDefinitionFileData(DefinitionFileDataRequest) returns(DefinitionFileDataResponse) { option (mavsdk.options.async_type) = SYNC; }
+     rpc SetDefinitionFileData(SetDefinitionFileDataRequest) returns(SetDefinitionFileDataResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message PrepareRequest {}
@@ -438,9 +438,9 @@ message ResetSettingsResponse {
     CameraResult camera_result = 1;
 }
 
-message DefinitionFileDataRequest{
+message SetDefinitionFileDataRequest{
     string definition_file_data = 1;    // the definition file data
 }
-message DefinitionFileDataResponse {
+message SetDefinitionFileDataResponse {
     CameraResult camera_result = 1;
 }
