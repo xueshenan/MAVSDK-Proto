@@ -14,9 +14,15 @@ service CameraServerService {
 
     // Subscribe to image capture requests. Each request received should respond to using RespondTakePhoto.
     rpc SubscribeTakePhoto(SubscribeTakePhotoRequest) returns(stream TakePhotoResponse) { option (mavsdk.options.async_type) = ASYNC; }
-    
+
     // Respond to an image capture request from SubscribeTakePhoto.
     rpc RespondTakePhoto(RespondTakePhotoRequest) returns(RespondTakePhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
+
+    // Subscribe to start photo interval requests. Each request received should response to using StartPhotoIntervalResponse
+    rpc SubscribeStartPhotoInterval(SubscribeStartPhotoIntervalRequest) returns(StartPhotoIntervalResponse) { option (mavsdk.options.async_type) = ASYNC; }
+
+    // Subscribe to stop photo interval requests. Each request received should response to using StopPhotoIntervalResponse
+    rpc SubscribeStopPhotoInterval(SubscribeStopPhotoIntervalRequest) returns(StopPhotoIntervalResponse) { option (mavsdk.options.async_type) = ASYNC; }
 
     // Subscribe to start video requests. Each request received should response to using StartVideoResponse
     rpc SubscribeStartVideo(SubscribeStartVideoRequest) returns(stream StartVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
@@ -50,19 +56,16 @@ service CameraServerService {
     
     // Subscribe to reset settings requests. Each request received should response to using ResetSettingsResponse
     rpc SubscribeResetSettings(SubscribeResetSettingsRequest) returns(stream ResetSettingsResponse) { option (mavsdk.options.async_type) = ASYNC; }
-
 }
 
 message SetInformationRequest {
     Information information = 1; // information about the camera
 }
-
 message SetInformationResponse {
     CameraServerResult camera_server_result = 1;
 }
 
 message SubscribeTakePhotoRequest {}
-
 message TakePhotoResponse {
     int32 index = 1;
 }
@@ -153,33 +156,39 @@ message CameraServerResult {
     string result_str = 2; // Human-readable English string describing the result
 }
 
-message SubscribeStartVideoRequest {}
+message SubscribeStartPhotoIntervalRequest {
+}
+message StartPhotoIntervalResponse {
+    float interval_s = 1; // Interval between photos (in seconds)
+}
 
+message SubscribeStopPhotoIntervalRequest {}
+message StopPhotoIntervalResponse {
+    CameraServerResult camera_server_result = 1;
+}
+
+message SubscribeStartVideoRequest {}
 message StartVideoResponse {
     int32 stream_id = 1;
 }
 
 message SubscribeStopVideoRequest {}
-
 message StopVideoResponse {
     int32 stream_id = 1;
 }
 
 message SubscribeStartVideoStreamingRequest {}
-
 message StartVideoStreamingResponse {
     int32 stream_id = 1;
 }
 
 message RespondStartVideoStreamingRequest {}
-
 message RespondStartVideoStreamingResponse {
     CameraServerResult camera_server_result = 1;
 }
 
 message SubscribeStopVideoStreamingRequest {
 }
-
 message StopVideoStreamingResponse {
     int32 stream_id = 1;
 }
@@ -193,13 +202,11 @@ enum Mode {
 
 message SubscribeSetModeRequest {
 }
-
 message SetModeResponse {
     Mode mode = 1;
 }
 
 message SubscribeStorageInformationRequest {}
-
 message StorageInformationResponse {
     int32 storage_id = 1;
 }
@@ -241,13 +248,11 @@ message StorageInformation {
 message RespondStorageInformationRequest {
     StorageInformation storage_information = 1; // camera storage information
 }
-
 message RespondStorageInformationResponse {
     CameraServerResult camera_server_result = 1;
 }
 
 message SubscribeCaptureStatusRequest {}
-
 message CaptureStatusResponse {
     int32 storage_id = 1;
 }
@@ -274,19 +279,16 @@ message CaptureStatus {
 message RespondCaptureStatusRequest {
     CaptureStatus capture_status = 1; // camera capture status
 }
-
 message RespondCaptureStatusResponse {
     CameraServerResult camera_server_result = 1;
 }
 
 message SubscribeFormatStorageRequest {}
-
 message FormatStorageResponse {
     int32 storage_id = 1;
 }
 
 message SubscribeResetSettingsRequest {}
-
 message ResetSettingsResponse {
     int32 camera_id = 1;
 }

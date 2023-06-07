@@ -116,16 +116,16 @@ service CameraService {
      */
     rpc ResetSettings(ResetSettingsRequest) returns(ResetSettingsResponse) {}
     /*
-     * Manual set the definition file data
+     * Manual set the definition data
      *
-     * The camera will use the definition file data to config the camera
+     * The camera will use the definition data to config the camera
      * The camera already support http protocol to download definition file
      * But we want to support mavlink ftp way to download file too.
-     * We donot want the camera to use file system to maintain the definition file.
-     * So we use mavlink ftp to downlaod the definition file first, 
-     * and read the definition file data set to camera. 
+     * We don't want the camera to use file system to maintain the definition file.
+     * So we use mavlink ftp to download the definition file first, 
+     * and read the definition file data to manual set. 
      */
-     rpc SetDefinitionFileData(SetDefinitionFileDataRequest) returns(SetDefinitionFileDataResponse) { option (mavsdk.options.async_type) = SYNC; }
+     rpc SetDefinitionData(SetDefinitionDataRequest) returns(SetDefinitionDataResponse) { option (mavsdk.options.async_type) = SYNC; }
 }
 
 message PrepareRequest {}
@@ -160,12 +160,16 @@ message StopVideoResponse {
     CameraResult camera_result = 1;
 }
 
-message StartVideoStreamingRequest {}
+message StartVideoStreamingRequest {
+    int32 stream_id = 1;
+}
 message StartVideoStreamingResponse {
     CameraResult camera_result = 1;
 }
 
-message StopVideoStreamingRequest {}
+message StopVideoStreamingRequest {
+    int32 stream_id = 1;
+}
 message StopVideoStreamingResponse {
     CameraResult camera_result = 1;
 }
@@ -438,9 +442,9 @@ message ResetSettingsResponse {
     CameraResult camera_result = 1;
 }
 
-message SetDefinitionFileDataRequest{
-    string definition_file_data = 1;    // the definition file data
+message SetDefinitionDataRequest{
+    string definition_data = 1;    // the definition raw data
 }
-message SetDefinitionFileDataResponse {
+message SetDefinitionDataResponse {
     CameraResult camera_result = 1;
 }
