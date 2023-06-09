@@ -53,7 +53,7 @@ service CameraServerService {
 
     // Subscribe to format storage requests. Each request received should response to using FormatStorageResponse
     rpc SubscribeFormatStorage(SubscribeFormatStorageRequest) returns(stream FormatStorageResponse) { option (mavsdk.options.async_type) = ASYNC; }
-    
+
     // Subscribe to reset settings requests. Each request received should response to using ResetSettingsResponse
     rpc SubscribeResetSettings(SubscribeResetSettingsRequest) returns(stream ResetSettingsResponse) { option (mavsdk.options.async_type) = ASYNC; }
 }
@@ -82,7 +82,6 @@ message RespondTakePhotoRequest {
     TakePhotoFeedback take_photo_feedback = 1; // The feedback
     CaptureInfo capture_info = 2; // The capture information
 }
-
 message RespondTakePhotoResponse {
     CameraServerResult camera_server_result = 1;
 }
@@ -156,8 +155,7 @@ message CameraServerResult {
     string result_str = 2; // Human-readable English string describing the result
 }
 
-message SubscribeStartPhotoIntervalRequest {
-}
+message SubscribeStartPhotoIntervalRequest {}
 message StartPhotoIntervalResponse {
     float interval_s = 1; // Interval between photos (in seconds)
 }
@@ -182,13 +180,7 @@ message StartVideoStreamingResponse {
     int32 stream_id = 1;
 }
 
-message RespondStartVideoStreamingRequest {}
-message RespondStartVideoStreamingResponse {
-    CameraServerResult camera_server_result = 1;
-}
-
-message SubscribeStopVideoStreamingRequest {
-}
+message SubscribeStopVideoStreamingRequest {}
 message StopVideoStreamingResponse {
     int32 stream_id = 1;
 }
@@ -200,8 +192,7 @@ enum Mode {
     MODE_VIDEO = 2; // Video mode
 }
 
-message SubscribeSetModeRequest {
-}
+message SubscribeSetModeRequest {}
 message SetModeResponse {
     Mode mode = 1;
 }
@@ -254,7 +245,7 @@ message RespondStorageInformationResponse {
 
 message SubscribeCaptureStatusRequest {}
 message CaptureStatusResponse {
-    int32 storage_id = 1;
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
 }
 
 message CaptureStatus {
@@ -285,10 +276,10 @@ message RespondCaptureStatusResponse {
 
 message SubscribeFormatStorageRequest {}
 message FormatStorageResponse {
-    int32 storage_id = 1;
+    int32 storage_id = 1;   // the storage id to format
 }
 
 message SubscribeResetSettingsRequest {}
 message ResetSettingsResponse {
-    int32 camera_id = 1;
+    int32 reserved = 1;    // reserved, just make protoc-gen-mavsdk working
 }
