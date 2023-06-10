@@ -19,10 +19,10 @@ service CameraServerService {
     rpc RespondTakePhoto(RespondTakePhotoRequest) returns(RespondTakePhotoResponse) { option (mavsdk.options.async_type) = SYNC; }
 
     // Subscribe to start photo interval requests. Each request received should response to using StartPhotoIntervalResponse
-    rpc SubscribeStartPhotoInterval(SubscribeStartPhotoIntervalRequest) returns(StartPhotoIntervalResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    rpc SubscribeStartPhotoInterval(SubscribeStartPhotoIntervalRequest) returns(stream StartPhotoIntervalResponse) { option (mavsdk.options.async_type) = ASYNC; }
 
     // Subscribe to stop photo interval requests. Each request received should response to using StopPhotoIntervalResponse
-    rpc SubscribeStopPhotoInterval(SubscribeStopPhotoIntervalRequest) returns(StopPhotoIntervalResponse) { option (mavsdk.options.async_type) = ASYNC; }
+    rpc SubscribeStopPhotoInterval(SubscribeStopPhotoIntervalRequest) returns(stream StopPhotoIntervalResponse) { option (mavsdk.options.async_type) = ASYNC; }
 
     // Subscribe to start video requests. Each request received should response to using StartVideoResponse
     rpc SubscribeStartVideo(SubscribeStartVideoRequest) returns(stream StartVideoResponse) { option (mavsdk.options.async_type) = ASYNC; }
@@ -162,7 +162,7 @@ message StartPhotoIntervalResponse {
 
 message SubscribeStopPhotoIntervalRequest {}
 message StopPhotoIntervalResponse {
-    CameraServerResult camera_server_result = 1;
+    int32 reserved = 1;  // reserved, just make protoc-gen-mavsdk working
 }
 
 message SubscribeStartVideoRequest {}
